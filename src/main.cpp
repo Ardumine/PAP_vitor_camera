@@ -62,11 +62,12 @@ void loop()
         if (tempo_que_mostrou > 500)
         {
           digitalWrite(LED_BUILTIN, false);
-          //Serial.print(tempo_que_mostrou);
+          
           Serial.println(ID_tag_crrt);
 
           delay(300);
           ult_millis_mostrou = millis();
+          ult_tag = -1;
 
           for (int i = 0; i < 20; i++)
           {
@@ -82,6 +83,8 @@ void loop()
     {
       digitalWrite(pino_erro, !digitalRead(pino_erro));
       delay(50);
+      ult_millis_mostrou = millis();
+      ult_tag = -1;
     }
     else
     {
