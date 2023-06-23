@@ -14,13 +14,14 @@ void setup()
   Wire.begin();
   while (!huskylens.begin(Wire))
   {
-    Serial.println(F("Begin failed!"));
     delay(500);
     digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+    digitalWrite(pino_erro, !digitalRead(pino_erro));
+
     // break;
   }
   huskylens.writeAlgorithm(ALGORITHM_TAG_RECOGNITION); // Switch the algorithm to object tracking.
-  Serial.println("OK");
+  //Serial.println("OK");
 }
 
 int ult_millis_mostrou = 0;
