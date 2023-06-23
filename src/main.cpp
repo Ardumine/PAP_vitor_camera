@@ -9,7 +9,7 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(pino_erro, OUTPUT);
 
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   Wire.begin();
   while (!huskylens.begin(Wire))
