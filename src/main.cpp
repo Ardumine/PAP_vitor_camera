@@ -4,12 +4,16 @@
 HUSKYLENS huskylens;
 int pino_erro = 12;
 
+
 void setup()
 {
-  pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(pino_erro, OUTPUT);
 
   Serial.begin(9600);
+
+  pinMode(LED_BUILTIN, OUTPUT);
+
+  pinMode(pino_erro, OUTPUT);
+
 
   Wire.begin();
   while (!huskylens.begin(Wire))
@@ -21,27 +25,45 @@ void setup()
     // break;
   }
   huskylens.writeAlgorithm(ALGORITHM_TAG_RECOGNITION); // Switch the algorithm to object tracking.
-  //Serial.println("OK");
 }
+void (*resetFunc)(void) = 0;
 
 int ult_millis_mostrou = 0;
 int ult_tag = -1;
 void loop()
 {
+  if (Serial.available() > 0)
+  {
+    delay(100);
+    String dado_rec = Serial.readString();
+    Serial.println(dado_rec);
+    if (dado_rec.startsWith("ft"))
+    {
+      
+     while (!huskylens.saveScreenshotToSDCard())  // bool saveScreenshotToSDCard() or  bool savePictureToSDCard()
+    {
+      Serial.println(F("save screenshot to SD card failed!")); 
+      delay(100);
+    }
+    
+      Serial.println("FOTO!");
+    }
+  }
+
   if (!huskylens.request())
   {
-    ///Serial.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
+    /// Serial.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
+    resetFunc();
   }
   else if (!huskylens.isLearned())
   {
-    //Serial.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
+    // Serial.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
   }
   else if (!huskylens.available())
   {
     ult_tag = -1;
     digitalWrite(LED_BUILTIN, false);
     digitalWrite(pino_erro, false);
-
   }
   else
   {
@@ -63,7 +85,7 @@ void loop()
         if (tempo_que_mostrou > 500)
         {
           digitalWrite(LED_BUILTIN, false);
-          
+
           Serial.println(ID_tag_crrt);
 
           delay(300);
