@@ -4,27 +4,32 @@
 HUSKYLENS huskylens;
 int pino_erro = 12;
 
-
 void setup()
 {
-
+  String comidas[] = {"Frango com batata", "Bife com  arroz", "Pescada cozida", "Francezinha", "Hamburger", "Água", "Sumo", "Coca-cola", "Água com gás", "Cerveja", "Fim"};
   Serial.begin(9600);
 
   pinMode(LED_BUILTIN, OUTPUT);
 
   pinMode(pino_erro, OUTPUT);
 
-
   Wire.begin();
   while (!huskylens.begin(Wire))
   {
-    delay(500);
+    delay(random(0, 100));
     digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
-    digitalWrite(pino_erro, !digitalRead(pino_erro));
+    digitalWrite(pino_erro, !digitalRead(LED_BUILTIN));
 
     // break;
   }
   huskylens.writeAlgorithm(ALGORITHM_TAG_RECOGNITION); // Switch the algorithm to object tracking.
+  digitalWrite(LED_BUILTIN, 0);
+  digitalWrite(pino_erro, 0);
+
+  for (int i = 1; i != 12; i++)
+  {
+    huskylens.setCustomName(comidas[i - 1], i);
+  }
 }
 void (*resetFunc)(void) = 0;
 
@@ -34,30 +39,30 @@ void loop()
 {
   if (Serial.available() > 0)
   {
+
     delay(100);
     String dado_rec = Serial.readString();
-    Serial.println(dado_rec);
     if (dado_rec.startsWith("ft"))
     {
-      
-     while (!huskylens.saveScreenshotToSDCard())  // bool saveScreenshotToSDCard() or  bool savePictureToSDCard()
-    {
-      Serial.println(F("save screenshot to SD card failed!")); 
-      delay(100);
-    }
-    
-      Serial.println("FOTO!");
+      huskylens.savePictureToSDCard();
+      // while (!) // bool saveScreenshotToSDCard() or  bool savePictureToSDCard()
+      {
+        digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+
+        // Serial1.println(F("save screenshot to SD card failed!"));
+        delay(10);
+      }
     }
   }
 
   if (!huskylens.request())
   {
-    /// Serial.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
+    /// Serial1.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
     resetFunc();
   }
   else if (!huskylens.isLearned())
   {
-    // Serial.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
+    // Serial1.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
   }
   else if (!huskylens.available())
   {

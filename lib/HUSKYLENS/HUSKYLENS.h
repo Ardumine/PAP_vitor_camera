@@ -943,7 +943,7 @@ public:
         husky_lens_protocol_write_buffer_uint8(protocol.firmwareVersion.data, protocol.firmwareVersion.length);
         int length = husky_lens_protocol_write_end();
         for(int i=0; i<protocol.firmwareVersion.length; i++){
-           Serial.println(protocol.firmwareVersion.data[i]);
+           //Serial.println(protocol.firmwareVersion.data[i]);
         }
         protocolWrite(buffer, length);
         return true;
